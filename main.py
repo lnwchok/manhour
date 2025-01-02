@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 
 import pandas as pd
@@ -17,17 +18,15 @@ xlsx_filename = FILENAME or os.getenv("FILENAME")
 sheet_name = SHEET_NAME or os.getenv("SHEET_NAME")
 
 filename = f"{folder_path}\{xlsx_filename}"
-# print(f"{folder_path}\{xlsx_filename}")
 
-# wb = load_workbook(filename, read_only=True, keep_vba=False)
-# ws = wb[sheet_name]
+job_no = sys.argv[1:][0] or ""
 
 data = pd.read_excel(
     filename,
     sheet_name=sheet_name,
     usecols="A:B, E:F, I",
     converters={"YEAR": str, "MONTH": str},
-).query("YEAR == '2024'" and "`JOB NO.` == 'BMC-538'")
+).query("YEAR == 2024" and "`JOB NO.` == @job_no")
 
 # data1 = data.query("YEAR == '2024'")
 
