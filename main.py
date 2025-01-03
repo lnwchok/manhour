@@ -1,5 +1,6 @@
 import os
 import sys
+import datetime
 from dotenv import load_dotenv
 
 import pandas as pd
@@ -16,14 +17,20 @@ filename = f"{folder_path}\\{xlsx_filename}"
 
 job_no = sys.argv[1:][0]
 
-data = pd.read_excel(
+def generate_period():
+    x = datetime.datetime.now()
+    return f"YEAR == {x.year - 1} & MONTH == {x.month + 5}"
+
+period = generate_period()
+
+pre_data = pd.read_excel(
     filename,
     sheet_name=sheet_name,
     usecols="A:B, E:F, I",
     converters={"YEAR": int, "MONTH": int},
-).query("YEAR == 2024").query("`JOB NO.` == @job_no")
+).query("`JOB NO.` == @job_no").query(period)
 
-# ).query("`JOB NO.` == @job_no")
-# data1 = data.query("YEAR == '2024'")
+data = pre_data.pivot_table(values="HOURS", index=["STAFF NAME"], columns=["MONTH"], aggfunc="sum")
+
 
 print(data)
